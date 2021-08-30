@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './app.scss';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 
