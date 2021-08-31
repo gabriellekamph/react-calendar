@@ -3,7 +3,25 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
+
 export class Calendar extends Component {
+
+  state = {
+    modal: false,
+    currentEvents: []
+  };
+
+  // Fetch all events from json file and set as state
+
+  componentDidMount() {
+    fetch('../events.json')
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      this.setState({currentEvents: data})
+    }
+    );
+  }
 
   // Callback function to handle what happens when clicking on a date
 
@@ -25,10 +43,7 @@ export class Calendar extends Component {
           dateClick={this.handleDateClick}
           initialView="dayGridMonth"
           weekends={true} // Show or hide weekends with true/false
-          events={[
-            { title: 'My birthday, yay!', date: '2021-08-28' },
-            { title: 'Second event', date: '2021-08-30' }
-          ]}
+          events={this.state.currentEvents}
           eventClick={this.handleEventClick}
         />
       </div>
