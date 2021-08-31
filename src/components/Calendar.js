@@ -5,9 +5,16 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 export class Calendar extends Component {
 
+  // Callback function to handle what happens when clicking on a date
+
   handleDateClick = (arg) => {
-    alert(arg.dateStr)
+    alert("Clicked on: " + arg.dateStr)
     console.log("Clicked on a date");
+  }
+
+  handleEventClick = (info) => {
+    alert('Event: ' + info.event.title);
+    console.log("Clicked on event with title: " + info.event.title);
   }
 
   render() {
@@ -19,9 +26,10 @@ export class Calendar extends Component {
           initialView="dayGridMonth"
           weekends={true} // Show or hide weekends with true/false
           events={[
-            { title: 'My birthday, yay!', date: '2021-08-28'},
-            { title: 'Second event', date: '2021-08-30'}
+            { title: 'My birthday, yay!', date: '2021-08-28' },
+            { title: 'Second event', date: '2021-08-30' }
           ]}
+          eventClick={this.handleEventClick}
         />
       </div>
     )
