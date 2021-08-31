@@ -1,14 +1,22 @@
 [
     {
         "title": "test event",
-        "date": "2021-08-30"
+        "date": "2021-08-30",
+        "allDay": true
     },
     {
         "title": "second test event",
-        "date": "2021-08-29"
+        "date": "2021-08-29",
+        "allDay": true
     },
     {
         "title": "third test event",
-        "date": "2021-08-05"
+        "date": "2021-08-05",
+        "allDay": true
+    },
+    {
+        "title": "fourth test event",
+        "date": "2021-08-05",
+        "allDay": true
     }
 ]
