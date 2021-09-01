@@ -5,25 +5,26 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
 
+
 export class Calendar extends Component {
 
   calendarRef = React.createRef()
-  state = {
-    modal: false,
-    currentEvents: []
-  };
-  
-    // Fetch all events from json file and set as state
 
-    componentDidMount() {
-      fetch('../events.json')
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        this.setState({currentEvents: data})
-      }
-      );
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      events: []
+    };
+  }
+
+  componentWillMount() {
+    fetch("http://localhost:3000/events.json")
+    .then(res => res.json())
+    .then((data) => {
+      this.setState({ events: data })
+      console.log(data)
+      });
+  }
 
   render() {
     return (
@@ -39,20 +40,16 @@ export class Calendar extends Component {
           editable={true}
           selectable={true}
           initialView="dayGridMonth"
-          events={this.state.currentEvents}
-          eventClick={this.handleEventClick}
+          events={this.state.events}
           select={this.handleDateSelect}
+          eventClick={this.handleEventClick}
           eventsSet={this.handleEvents}
 
-          // eventsDidUpdate={this.handleEventsDidUpdate}
-          // eventContent={renderEventContent}
-          // eventClick={this.handleEventClick}
-          // dateClick={this.handleDateClick}
         />
       </div>
     )
   }
-
+  
   // Function to create new event after click on date
 
   handleDateSelect = (selectInfo) => {
@@ -73,14 +70,6 @@ export class Calendar extends Component {
     }
   }
 
-
-  // handleEvents = (events) => {
-  //   this.setState({
-  //     currentEvents: events
-  //   })
-  // }
-
-
   // Function to show info about selected event on click
 
   handleEventClick = (info) => {
@@ -88,6 +77,8 @@ export class Calendar extends Component {
     console.log("Clicked on event with title: " + info.event.title + " and id: " + info.event.id);
   }
 }
+
+// Function to create id for new event
 
 let eventGuid = 0
 function createEventId() {
