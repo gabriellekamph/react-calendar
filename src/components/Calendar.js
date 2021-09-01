@@ -10,6 +10,8 @@ export class Calendar extends Component {
 
   calendarRef = React.createRef()
 
+  // Constructor so set initial state
+
   constructor(props) {
     super(props);
     this.state = {
@@ -17,7 +19,9 @@ export class Calendar extends Component {
     };
   }
 
-  componentWillMount() {
+  // Fetching event data from json file
+
+  componentDidMount() {
     fetch("http://localhost:3000/events.json")
     .then(res => res.json())
     .then((data) => {
@@ -44,7 +48,6 @@ export class Calendar extends Component {
           select={this.handleDateSelect}
           eventClick={this.handleEventClick}
           eventsSet={this.handleEvents}
-
         />
       </div>
     )
