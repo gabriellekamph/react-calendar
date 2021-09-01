@@ -6,6 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 
 
+
 export class Calendar extends Component {
 
   calendarRef = React.createRef()
@@ -81,11 +82,16 @@ export class Calendar extends Component {
   }
 }
 
-// Function to create id for new event
+// Function to create unique id for new event
 
-let eventGuid = 0
 function createEventId() {
-  return String(eventGuid++)
+
+  let randomId = require('random-id');
+  let len = 8;
+  let pattern = 'aA0';
+  let id = randomId(len, pattern);
+
+  return String(id);
 }
 
 export default Calendar;

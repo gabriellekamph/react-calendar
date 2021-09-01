@@ -1,22 +1,26 @@
 [
     {
-        "title": "test event",
-        "date": "2021-08-30",
+        "id": "1bt6YHj1",
+        "title": "First event from json",
+        "date": "2021-09-01",
         "allDay": true
     },
     {
-        "title": "second test event",
-        "date": "2021-08-29",
+        "id": "k90GB23a",
+        "title": "Second event from json",
+        "date": "2021-09-04",
         "allDay": true
     },
     {
-        "title": "third test event",
-        "date": "2021-08-05",
+        "id": "34fGy7Nm",
+        "title": "Third event from json",
+        "date": "2021-09-15",
         "allDay": true
     },
     {
-        "title": "fourth test event",
-        "date": "2021-08-05",
+        "id": "0tG2SdT7",
+        "title": "Fourth event from json",
+        "date": "2021-09-20",
         "allDay": true
     }
 ]
