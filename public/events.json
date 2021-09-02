@@ -2,25 +2,13 @@
     {
         "id": "1bt6YHj1",
         "title": "First event from json",
-        "date": "2021-09-01",
-        "allDay": true
+        "start": "2021-09-01",
+        "end": "2021-09-01"
     },
     {
         "id": "k90GB23a",
         "title": "Second event from json",
-        "date": "2021-09-04",
-        "allDay": true
-    },
-    {
-        "id": "34fGy7Nm",
-        "title": "Third event from json",
-        "date": "2021-09-15",
-        "allDay": true
-    },
-    {
-        "id": "0tG2SdT7",
-        "title": "Fourth event from json",
-        "date": "2021-09-20",
-        "allDay": true
+        "start": "2021-09-12",
+        "end": "2021-09-12"
     }
 ]

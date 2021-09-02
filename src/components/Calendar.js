@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
-import FullCalendar from '@fullcalendar/react';
+import FullCalendar, { CalendarDataManager } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-
-
-
 
 export class Calendar extends Component {
 
   calendarRef = React.createRef()
 
-  // Constructor so set initial state
+  // Constructor to set initial state
 
   constructor(props) {
     super(props);
@@ -20,15 +17,13 @@ export class Calendar extends Component {
     };
   }
 
-  // Fetching event data from json file
+  // Fetching events from local storage
 
   componentDidMount() {
-    fetch("http://localhost:3000/events.json")
-    .then(res => res.json())
-    .then((data) => {
-      this.setState({ events: data })
-      console.log(data)
-      });
+
+    const eventsFromLocalStorage = JSON.parse(localStorage.getItem("events"));
+    this.setState({ events: eventsFromLocalStorage });
+
   }
 
   render() {
@@ -53,23 +48,35 @@ export class Calendar extends Component {
       </div>
     )
   }
-  
+
   // Function to create new event after click on date
 
   handleDateSelect = (selectInfo) => {
     let title = prompt('Add title for your event: ')
     let calendarApi = this.calendarRef.current.getApi()
+    let savedEvents = JSON.parse(localStorage.getItem("events")) || [];
 
     calendarApi.unselect()
 
     if(title) {
+
+      let newEvent = {
+        id: createEventId(),
+        title,
+        start: selectInfo.startStr,
+        end: selectInfo.endStr
+      };
+
+      savedEvents.push(newEvent)
+      localStorage.setItem("events", JSON.stringify(savedEvents));
+
       calendarApi.addEvent({
         id: createEventId(),
         title,
         start: selectInfo.startStr,
         end: selectInfo.endStr,
-        allDay: true
       })
+
       console.log("Added new event with title: " + title)
     }
   }
