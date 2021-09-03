@@ -19,23 +19,24 @@ export class Calendar extends Component {
     this.state = {
       modal: false,
       title: "",
-      allEvents: []
+      allEvents: [],
+      event: []
     };
   }
 
-  toggle = (selectInfo) => {
-    this.setState({ modal: !this.state.modal, selectInfo });
-  };
+  toggle = () => {
+    this.setState({ modal: !this.state.modal, event: this.state.event });
+    console.log(this.state.event.title);
+    console.log(this.state.event.id);
 
+  };
 
   // Fetching events from local storage
 
   componentDidMount() {
-
     const eventsFromLocalStorage = JSON.parse(localStorage.getItem('events'));
     this.setState({ allEvents: eventsFromLocalStorage });
     console.log('Display all events from local storage');
-
   }
 
   // Render calendar 
@@ -67,17 +68,14 @@ export class Calendar extends Component {
           className={this.props.className}
           >
           <ModalHeader toggle={this.toggle}>
-            <div>
-              <h3>Event title</h3>
-            </div>
+            <h3>{this.state.event.title}</h3>
           </ModalHeader>
           <ModalBody>
-            <div>
-              <p>Text about event here</p>
-            </div>
+            <b>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</b>
           </ModalBody>
           <ModalFooter>
-            <Button color="red">Do something</Button>
+            <Button color="green">Mark as done</Button>
+            <Button color="red" id="btn-delete-event" onClick={this.handleDeleteEvent}>Delete event</Button>
             <Button color="blue" onClick={this.toggle}>Cancel</Button>
           </ModalFooter>
           </Modal>
@@ -86,7 +84,7 @@ export class Calendar extends Component {
     )
   }
 
-  // Render sidebar
+  // Render sidebar and sort list of events by date
 
   renderSidebar() {
 
@@ -102,7 +100,7 @@ export class Calendar extends Component {
       countEvents = "No events saved, let's add one!"
       eventList = "";
     } else {
-      countEvents = "Saved events:";
+      countEvents = "Upcoming events:";
       eventList = sortedEvents.map(renderSidebarEvent)
     }
 
@@ -160,10 +158,13 @@ export class Calendar extends Component {
 
   // Function to show info about selected event on click
 
-  handleEventClick = (info) => {
+  handleEventClick = ( { event, el }) => {
     this.toggle();
-    console.log('Clicked on event with title: ' + info.event.title + ' and id: ' + info.event.id);
-  }
+    this.setState({ event: event });
+
+    console.log('Clicked on event with title: ' + event.title + ' and id: ' + event.id);
+    
+  };
 
   // handleEvents = (events) => {
   //   this.setState({
