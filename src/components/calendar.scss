@@ -7,18 +7,20 @@ body {
 .container {
     display: flex;
     min-height: 100%;
+    width: 100%;
 }
 
 .sidebar {
-    width: 300px;
+    width: 250px;
     background-color: rgb(207, 209, 208);
     padding: 20px;
-    margin: 20px;
+    margin: 10px;
 }
 
 .showCalendar {
+    width: 80%;
     flex-grow: 1;
-    padding: 3em;
+    padding: 2em;
   }
 
 h1 {
@@ -29,6 +31,7 @@ h1 {
 
 h2 {
     font-size: 16px;
+    margin-bottom: 20px;
 }
 
 li {
