@@ -1,0 +1,36 @@
+body {
+    background-color: rgb(232, 233, 232);
+    font-family: 'lato', sans-serif;
+    font-size: 12px;
+}
+
+.container {
+    display: flex;
+    min-height: 100%;
+}
+
+.sidebar {
+    width: 300px;
+    background-color: rgb(207, 209, 208);
+    padding: 20px;
+    margin: 20px;
+}
+
+.showCalendar {
+    flex-grow: 1;
+    padding: 3em;
+  }
+
+h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 16px;
+}
+
+li {
+    margin-bottom: 10px;
+}
