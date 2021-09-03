@@ -92,13 +92,18 @@ export class Calendar extends Component {
 
     let countEvents;
     let eventList;
+    let unsortedEvents = this.state.allEvents;
+
+    const sortedEvents = unsortedEvents.sort((a, b) => {
+      return moment(a.start).diff(b.start);
+    })
 
     if (!localStorage.getItem("events")){
       countEvents = "No events saved, let's add one!"
       eventList = "";
     } else {
       countEvents = "Saved events:";
-      eventList = this.state.allEvents.map(renderSidebarEvent)
+      eventList = sortedEvents.map(renderSidebarEvent)
     }
 
     return (
@@ -190,7 +195,6 @@ function createEventId() {
 // Function to render sidebar with list of all events
 
 function renderSidebarEvent(event) {
-  console.log(event)
   return (
     <li key={event.id}>
       <b>{moment(event.start).format('dddd, MMM Do, YYYY')}</b>
