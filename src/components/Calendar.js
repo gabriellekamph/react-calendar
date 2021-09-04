@@ -36,6 +36,11 @@ export class Calendar extends Component {
     const eventsFromLocalStorage = JSON.parse(localStorage.getItem('events'));
     this.setState({ allEvents: eventsFromLocalStorage });
     console.log('Display all events from local storage');
+
+    if (this.state.event.done === true) {
+      console.log("these are checked")
+
+    }
   }
 
   // Toggle modal between open and close
@@ -96,7 +101,7 @@ export class Calendar extends Component {
 
     let countEvents;
     let eventList;
-    let unsortedEvents = this.state.allEvents;
+    let unsortedEvents = this.state.allEvents || [];
 
     const sortedEvents = unsortedEvents.sort((a, b) => {
       return moment(a.start).diff(b.start);
@@ -142,20 +147,19 @@ export class Calendar extends Component {
 
     let eventId = this.state.event.id;
     console.log("Event with id " + eventId + "is marked as done!");
+
+    let arr = JSON.parse(localStorage.getItem("events"));
+    let updatedArr = arr.map(event => event.id === eventId ? { ...event, done: true, color: "#D3D3D3" } : event);
+
+    localStorage.setItem('events', JSON.stringify(updatedArr));
     this.toggle();
+    // this.fetchEvents();
+    // this.toggle();
   }
 
   // Create new event after click on date
 
   handleDateSelect = (selectInfo) => {
-
-    // <form>
-    //   <input
-    //   type="text"
-    //   name="username"
-    //   value={this.state.title}
-    //   onChange={this.handleTitleInput} />
-    // </form>
 
     let title = prompt('Add title for your event: ')
     let calendarApi = this.calendarRef.current.getApi()
@@ -170,7 +174,8 @@ export class Calendar extends Component {
         start: selectInfo.startStr,
         end: null,
         allDay: true,
-        done: true
+        done: null,
+        color: "blue"
       };
 
       savedEvents.push(newEvent)
