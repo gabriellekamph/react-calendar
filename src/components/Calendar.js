@@ -10,7 +10,7 @@ import '../components/calendar.scss';
 
 export class Calendar extends Component {
 
-  calendarRef = React.createRef()
+  calendarRef = React.createRef();
 
   // Constructor to set initial state
 
@@ -20,24 +20,30 @@ export class Calendar extends Component {
       modal: false,
       title: "",
       allEvents: [],
-      event: []
+      event: [],
     };
   }
 
-  toggle = () => {
-    this.setState({ modal: !this.state.modal, event: this.state.event });
-    console.log(this.state.event.title);
-    console.log(this.state.event.id);
-
-  };
-
-  // Fetching events from local storage
+  // Fetch initial data
 
   componentDidMount() {
+    this.fetchEvents();
+  }
+
+  // Fetch events from local storage
+
+  fetchEvents = () => {
     const eventsFromLocalStorage = JSON.parse(localStorage.getItem('events'));
     this.setState({ allEvents: eventsFromLocalStorage });
     console.log('Display all events from local storage');
   }
+
+  // Toggle modal between open and close
+
+  toggle = () => {
+    this.setState({ modal: !this.state.modal, event: this.state.event });
+    this.fetchEvents();
+  };
 
   // Render calendar 
 
@@ -67,17 +73,17 @@ export class Calendar extends Component {
           toggle={this.toggle}
           className={this.props.className}
           >
-          <ModalHeader toggle={this.toggle}>
-            <h3>{this.state.event.title}</h3>
-          </ModalHeader>
-          <ModalBody>
-            <b>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</b>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="green">Mark as done</Button>
-            <Button color="red" id="btn-delete-event" onClick={this.handleDeleteEvent}>Delete event</Button>
-            <Button color="blue" onClick={this.toggle}>Cancel</Button>
-          </ModalFooter>
+            <ModalHeader toggle={this.toggle}>
+              <h3>{this.state.event.title}</h3>
+            </ModalHeader>
+            <ModalBody>
+              <b>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</b>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="green">Mark as done</Button>
+              <Button color="red" id="btn-delete-event" onClick={this.handleDeleteEvent}>Delete event</Button>
+              <Button color="blue" onClick={this.toggle}>Cancel</Button>
+            </ModalFooter>
           </Modal>
         </div>
       </div>
@@ -113,7 +119,24 @@ export class Calendar extends Component {
     )
   }
 
-  // Function to create new event after click on date
+  // Remove selected event on delete button click 
+
+  handleDeleteEvent = () => {
+
+    var eventId = this.state.event.id;
+    this.state.event.remove();        // Removes event from calendar view
+
+    let arr = JSON.parse(localStorage.getItem("events"));
+    let updatedArr = arr.filter(function(a) {
+      return a.id !== eventId;        // Removes event from local storage
+    });
+
+    localStorage.setItem("events", JSON.stringify(updatedArr));
+    console.log("Event with id " + eventId + " deleted from calendar");
+    this.toggle();
+  }
+
+  // Create new event after click on date
 
   handleDateSelect = (selectInfo) => {
 
@@ -132,7 +155,6 @@ export class Calendar extends Component {
     calendarApi.unselect()
 
     if(title) {
-
       let newEvent = {
         id: createEventId(),
         title,
@@ -144,41 +166,26 @@ export class Calendar extends Component {
       savedEvents.push(newEvent)
       localStorage.setItem('events', JSON.stringify(savedEvents));
 
-      calendarApi.addEvent({
-        id: createEventId(),
-        title,
-        start: selectInfo.startStr,
-        end: null,
-        allDay: true
-      })
-
+      this.fetchEvents();
       console.log('Added new event with title: ' + title)  
     }
   }
 
-  // Function to show info about selected event on click
+  // Show info about selected event on click
 
   handleEventClick = ( { event, el }) => {
     this.toggle();
     this.setState({ event: event });
-
     console.log('Clicked on event with title: ' + event.title + ' and id: ' + event.id);
-    
   };
-
-  // handleEvents = (events) => {
-  //   this.setState({
-  //     test: events
-  //   })
-  // }
 
   // Function to save new title
 
-  handleTitleInput = (e) => {
-  this.setState({ 
-    title: e.target.value 
-  })
-}
+  // handleTitleInput = (e) => {
+  //   this.setState({ 
+  //     title: e.target.value 
+  //   })
+  // }
 }
 
 // Function to create unique id for new event
@@ -195,11 +202,10 @@ function createEventId() {
 
 // Function to render sidebar with list of all events
 
-function renderSidebarEvent(event) {
+function renderSidebarEvent(event, reload) {
   return (
     <li key={event.id}>
-      <b>{moment(event.start).format('dddd, MMM Do, YYYY')}</b>
-      <br />
+      <b>{moment(event.start).format('dddd, MMM Do, YYYY')}</b><br />
       <i>{event.title}</i>
     </li>
   )
