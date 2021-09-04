@@ -37,3 +37,13 @@ h2 {
 li {
     margin-bottom: 10px;
 }
+
+.done {
+    color: rgba(0, 0, 0, 0.3);
+    text-decoration: line-through;
+}
+
+.notDone {
+    color:rgb(0, 0, 0);
+    text-decoration: none;
+}

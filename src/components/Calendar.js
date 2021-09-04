@@ -20,7 +20,7 @@ export class Calendar extends Component {
       modal: false,
       title: "",
       allEvents: [],
-      event: [],
+      event: []
     };
   }
 
@@ -80,7 +80,7 @@ export class Calendar extends Component {
               <b>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</b>
             </ModalBody>
             <ModalFooter>
-              <Button color="green">Mark as done</Button>
+              <Button color="green" onClick={this.handleCheckedEvent}>Mark as done</Button>
               <Button color="red" id="btn-delete-event" onClick={this.handleDeleteEvent}>Delete event</Button>
               <Button color="blue" onClick={this.toggle}>Cancel</Button>
             </ModalFooter>
@@ -123,7 +123,7 @@ export class Calendar extends Component {
 
   handleDeleteEvent = () => {
 
-    var eventId = this.state.event.id;
+    let eventId = this.state.event.id;
     this.state.event.remove();        // Removes event from calendar view
 
     let arr = JSON.parse(localStorage.getItem("events"));
@@ -136,17 +136,26 @@ export class Calendar extends Component {
     this.toggle();
   }
 
+  // Mark event as checked on button click
+
+  handleCheckedEvent = () => {
+
+    let eventId = this.state.event.id;
+    console.log("Event with id " + eventId + "is marked as done!");
+    this.toggle();
+  }
+
   // Create new event after click on date
 
   handleDateSelect = (selectInfo) => {
 
-    <form>
-      <input
-      type="text"
-      name="username"
-      value={this.state.title}
-      onChange={this.handleTitleInput} />
-    </form>
+    // <form>
+    //   <input
+    //   type="text"
+    //   name="username"
+    //   value={this.state.title}
+    //   onChange={this.handleTitleInput} />
+    // </form>
 
     let title = prompt('Add title for your event: ')
     let calendarApi = this.calendarRef.current.getApi()
@@ -160,7 +169,8 @@ export class Calendar extends Component {
         title,
         start: selectInfo.startStr,
         end: null,
-        allDay: true
+        allDay: true,
+        done: true
       };
 
       savedEvents.push(newEvent)
@@ -203,8 +213,17 @@ function createEventId() {
 // Function to render sidebar with list of all events
 
 function renderSidebarEvent(event, reload) {
+
+  let setClass;
+
+  if (event.done === true) {
+    setClass = "done";
+  } else {
+    setClass = "notDone";
+  }
+
   return (
-    <li key={event.id}>
+    <li key={event.id} className={setClass}>
       <b>{moment(event.start).format('dddd, MMM Do, YYYY')}</b><br />
       <i>{event.title}</i>
     </li>
