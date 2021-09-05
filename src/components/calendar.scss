@@ -47,3 +47,22 @@ li {
     color:rgb(0, 0, 0);
     text-decoration: none;
 }
+
+i {
+    margin-right: 10px;
+    margin-top: 20px;
+    
+    &:hover {
+        color: rgb(148, 28, 28);
+        cursor: pointer;
+    }
+}
+
+.remove-todos {
+    font-family: Arial, Helvetica, sans-serif;
+
+    &:hover {
+        color: rgb(148, 28, 28);
+        cursor: pointer;
+    }
+}

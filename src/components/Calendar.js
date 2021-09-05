@@ -30,7 +30,7 @@ export class Calendar extends Component {
     this.fetchEvents();
   }
 
-  // Fetch events from local storage
+  // Fetch todos from local storage
 
   fetchEvents = () => {
     const eventsFromLocalStorage = JSON.parse(localStorage.getItem('events'));
@@ -104,6 +104,10 @@ export class Calendar extends Component {
     let unsortedEvents = this.state.allEvents || [];
 
     const sortedEvents = unsortedEvents.sort((a, b) => {
+      let x = moment(a.start).diff(b.start);
+      if (x !== 0) {
+        return x
+      }
       return moment(a.start).diff(b.start);
     })
 
@@ -111,16 +115,24 @@ export class Calendar extends Component {
       countEvents = "No events saved, let's add one!"
       eventList = "";
     } else {
-      countEvents = "Upcoming events:";
+      countEvents = "Upcoming todos:";
       eventList = sortedEvents.map(renderSidebarEvent)
     }
 
     return (
+      <>
       <div className='sidebar'>
         <h1>React calendar</h1>
         <h2>{countEvents}</h2>
         <ul>{eventList}</ul>
+
+        <div>
+        
+        <p className="remove-todos" onClick={this.handleRemoveCompleted}><i className="fas fa-trash-alt" onClick={this.handleRemoveCompleted} /> Remove all completed todos</p>
       </div>
+      </div>
+
+      </>
     )
   }
 
@@ -153,8 +165,21 @@ export class Calendar extends Component {
 
     localStorage.setItem('events', JSON.stringify(updatedArr));
     this.toggle();
-    // this.fetchEvents();
-    // this.toggle();
+  }
+
+  // Remove all completed todos after trash can click
+
+  handleRemoveCompleted = () => {
+
+    let array = JSON.parse(localStorage.getItem("events"));
+    let c = window.confirm("Are you sure you want to remove all the completed todos?");
+    
+    if (c === true) {
+      let newArray = array.filter(el => el.done !== true)
+      console.log(newArray);
+      localStorage.setItem('events', JSON.stringify(newArray));
+      this.fetchEvents();
+    }
   }
 
   // Create new event after click on date
