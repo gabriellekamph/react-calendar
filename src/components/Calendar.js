@@ -17,8 +17,10 @@ export class Calendar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false,
+      firstModal: false,
+      secondModal: false,
       title: "",
+      start: "",
       allEvents: [],
       event: []
     };
@@ -33,22 +35,68 @@ export class Calendar extends Component {
   // Fetch todos from local storage
 
   fetchEvents = () => {
+    // let calendarApi = this.calendarRef.current.getApi()
     const eventsFromLocalStorage = JSON.parse(localStorage.getItem('events'));
     this.setState({ allEvents: eventsFromLocalStorage });
     console.log('Display all events from local storage');
 
     if (this.state.event.done === true) {
       console.log("these are checked")
-
     }
   }
 
   // Toggle modal between open and close
 
-  toggle = () => {
-    this.setState({ modal: !this.state.modal, event: this.state.event });
+  toggleFirst = () => {
+    this.setState({ firstModal: !this.state.firstModal, event: this.state.event });
     this.fetchEvents();
   };
+
+  toggleSecond = () => {
+    this.setState({ secondModal: !this.state.secondModal, event: this.state.event });
+    this.fetchEvents();
+  }
+
+  onChange = (event) => {
+
+    console.log("Changes are made!");
+
+    let nam = event.target.name;
+    let val = event.target.value;
+
+    this.setState({[nam]: val});
+  }
+
+  onSubmit = (event) => {
+
+    let calendarApi = this.calendarRef.current.getApi()
+    let savedEvents = JSON.parse(localStorage.getItem('events')) || [];
+    let title = this.state.title;
+    let start = this.state.start;
+    
+    event.preventDefault();
+    console.log("saved");
+
+    if(title) {
+      let newEvent = {
+        id: createEventId(),
+        title,
+        start: start,
+        end: null,
+        allDay: true,
+        done: null,
+        color: "blue"
+      };
+
+      savedEvents.push(newEvent)
+      localStorage.setItem('events', JSON.stringify(savedEvents));
+
+      calendarApi.unselect();
+
+      console.log('Added new event with title: ' + title)  
+      this.toggleSecond();
+    }
+  }
 
   // Render calendar 
 
@@ -72,24 +120,53 @@ export class Calendar extends Component {
               select={this.handleDateSelect}
               eventClick={this.handleEventClick}
               eventsSet={this.handleEvents}
+              dateClick={this.handleDateClick}
             />
+
+            {/* First modal to display selected event*/}
+
           <Modal
-          isOpen={this.state.modal}
-          toggle={this.toggle}
+          isOpen={this.state.firstModal}
+          toggleFirst={this.toggleFirst}
           className={this.props.className}
           >
-            <ModalHeader toggle={this.toggle}>
-              <h3>{this.state.event.title}</h3>
+            <ModalHeader toggleFirst={this.toggleFirst}>
+              <h3>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</h3>
             </ModalHeader>
             <ModalBody>
-              <b>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</b>
+              <h2>{this.state.event.title}</h2>
             </ModalBody>
             <ModalFooter>
               <Button color="green" onClick={this.handleCheckedEvent}>Mark as done</Button>
               <Button color="red" id="btn-delete-event" onClick={this.handleDeleteEvent}>Delete event</Button>
-              <Button color="blue" onClick={this.toggle}>Cancel</Button>
+              <Button color="blue" onClick={this.toggleFirst}>Cancel</Button>
             </ModalFooter>
           </Modal>
+
+          {/* Second modal to create new event */}
+
+          <Modal
+          isOpen={this.state.secondModal}
+          toggleSecond={this.toggleSecond}
+          className={this.props.className}
+          >
+            <ModalHeader toggleSecond={this.toggleSecond}>
+            {/* <h3>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</h3> */}
+            <h3>Show selected date here</h3>
+            </ModalHeader>
+            <form onSubmit={this.onSubmit}>
+              <ModalBody>
+                <h2>(Show all current events if there is any here)</h2>
+                <b>Add new todo: </b>
+                <input type="text" name="title" placeholder="Title" onChange={this.onChange}></input>
+              </ModalBody>
+              <ModalFooter>
+                <Button type="submit">Save</Button>
+                <Button color="blue" onClick={this.toggleSecond}>Cancel</Button>
+              </ModalFooter>
+            </form>
+          </Modal>
+
         </div>
       </div>
     )
@@ -125,11 +202,9 @@ export class Calendar extends Component {
         <h1>React calendar</h1>
         <h2>{countEvents}</h2>
         <ul>{eventList}</ul>
-
         <div>
-        
-        <p className="remove-todos" onClick={this.handleRemoveCompleted}><i className="fas fa-trash-alt" onClick={this.handleRemoveCompleted} /> Remove all completed todos</p>
-      </div>
+          <p className="remove-todos" onClick={this.handleRemoveCompleted}><i className="fas fa-trash-alt" onClick={this.handleRemoveCompleted} /> Remove all completed todos</p>
+        </div>
       </div>
 
       </>
@@ -150,7 +225,7 @@ export class Calendar extends Component {
 
     localStorage.setItem("events", JSON.stringify(updatedArr));
     console.log("Event with id " + eventId + " deleted from calendar");
-    this.toggle();
+    this.toggleFirst();
   }
 
   // Mark event as checked on button click
@@ -164,7 +239,7 @@ export class Calendar extends Component {
     let updatedArr = arr.map(event => event.id === eventId ? { ...event, done: true, color: "#D3D3D3" } : event);
 
     localStorage.setItem('events', JSON.stringify(updatedArr));
-    this.toggle();
+    this.toggleFirst();
   }
 
   // Remove all completed todos after trash can click
@@ -173,7 +248,7 @@ export class Calendar extends Component {
 
     let array = JSON.parse(localStorage.getItem("events"));
     let c = window.confirm("Are you sure you want to remove all the completed todos?");
-    
+
     if (c === true) {
       let newArray = array.filter(el => el.done !== true)
       console.log(newArray);
@@ -182,50 +257,21 @@ export class Calendar extends Component {
     }
   }
 
+
   // Create new event after click on date
 
-  handleDateSelect = (selectInfo) => {
-
-    let title = prompt('Add title for your event: ')
-    let calendarApi = this.calendarRef.current.getApi()
-    let savedEvents = JSON.parse(localStorage.getItem('events')) || [];
-
-    calendarApi.unselect()
-
-    if(title) {
-      let newEvent = {
-        id: createEventId(),
-        title,
-        start: selectInfo.startStr,
-        end: null,
-        allDay: true,
-        done: null,
-        color: "blue"
-      };
-
-      savedEvents.push(newEvent)
-      localStorage.setItem('events', JSON.stringify(savedEvents));
-
-      this.fetchEvents();
-      console.log('Added new event with title: ' + title)  
-    }
+  handleDateSelect = (e) => {
+    this.toggleSecond();
+    this.setState({ start: e.startStr })
   }
 
   // Show info about selected event on click
 
   handleEventClick = ( { event, el }) => {
-    this.toggle();
+    this.toggleFirst();
     this.setState({ event: event });
     console.log('Clicked on event with title: ' + event.title + ' and id: ' + event.id);
   };
-
-  // Function to save new title
-
-  // handleTitleInput = (e) => {
-  //   this.setState({ 
-  //     title: e.target.value 
-  //   })
-  // }
 }
 
 // Function to create unique id for new event
