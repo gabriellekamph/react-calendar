@@ -22,7 +22,8 @@ export class Calendar extends Component {
       title: "",
       start: "",
       allEvents: [],
-      event: []
+      event: [],
+      todaysTodos: []
     };
   }
 
@@ -60,10 +61,8 @@ export class Calendar extends Component {
   onChange = (event) => {
 
     console.log("Changes are made!");
-
     let nam = event.target.name;
     let val = event.target.value;
-
     this.setState({[nam]: val});
   }
 
@@ -151,17 +150,23 @@ export class Calendar extends Component {
           className={this.props.className}
           >
             <ModalHeader toggleSecond={this.toggleSecond}>
-            {/* <h3>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</h3> */}
-            <h3>Show selected date here</h3>
+            <h3>{moment(this.state.start).format('dddd, MMM Do, YYYY')}</h3>
             </ModalHeader>
             <form onSubmit={this.onSubmit}>
               <ModalBody>
-                <h2>(Show all current events if there is any here)</h2>
-                <b>Add new todo: </b>
-                <input type="text" name="title" placeholder="Title" onChange={this.onChange}></input>
+              <h2><ul>
+                {this.state.todaysTodos.map(item => (
+                      <li key={item}>{item}</li>
+                  ))}
+              </ul></h2>
+                <br />
+                <h2>
+                  Add new todo: <br />
+                  <input type="text" name="title" placeholder="Title" onChange={this.onChange}></input>
+                </h2>
               </ModalBody>
               <ModalFooter>
-                <Button type="submit">Save</Button>
+                <Button type="submit">Save new todo</Button>
                 <Button color="blue" onClick={this.toggleSecond}>Cancel</Button>
               </ModalFooter>
             </form>
@@ -169,6 +174,24 @@ export class Calendar extends Component {
 
         </div>
       </div>
+    )
+  }
+
+  listAllTodaysEvents() {
+
+    let todaysTodos = this.state.todaysTodos || [];
+
+    const listTodaysEvent = todaysTodos.map((todo) => {
+      console.log(todo)
+    })
+
+    return (
+      <>
+
+      <li key={listTodaysEvent}>
+        <i>List all events here plzzz</i>
+      </li>
+      </>
     )
   }
 
@@ -206,7 +229,6 @@ export class Calendar extends Component {
           <p className="remove-todos" onClick={this.handleRemoveCompleted}><i className="fas fa-trash-alt" onClick={this.handleRemoveCompleted} /> Remove all completed todos</p>
         </div>
       </div>
-
       </>
     )
   }
@@ -257,12 +279,32 @@ export class Calendar extends Component {
     }
   }
 
+  // Display all current events on selected day 
+
+  showTodaysEvent = (e) => {
+
+    console.log("Let's show all events of today");
+
+    let todaysDate = this.state.start;
+    let array = JSON.parse(localStorage.getItem("events")) || [];
+    let todaysTodos;
+
+
+    let filteredArray = array.filter(event => event.start === todaysDate) 
+    console.log(filteredArray)
+
+    let newestArray = filteredArray.map(todo => todo.title)
+    console.log(newestArray)
+
+    this.setState({ todaysTodos: newestArray })
+  }
 
   // Create new event after click on date
 
   handleDateSelect = (e) => {
     this.toggleSecond();
-    this.setState({ start: e.startStr })
+    this.setState({ start: e.startStr, todaysTodos: [] })
+    this.showTodaysEvent();
   }
 
   // Show info about selected event on click
@@ -273,6 +315,7 @@ export class Calendar extends Component {
     console.log('Clicked on event with title: ' + event.title + ' and id: ' + event.id);
   };
 }
+
 
 // Function to create unique id for new event
 
