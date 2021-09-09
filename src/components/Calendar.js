@@ -7,6 +7,7 @@ import moment from 'moment';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../components/calendar.scss';
+import Sidebar from './Sidebar';
 
 export class Calendar extends Component {
 
@@ -23,7 +24,8 @@ export class Calendar extends Component {
       start: '',
       allEvents: [],
       event: [],
-      todaysTodos: []
+      todaysTodos: [],
+      holidays: []
     };
   }
 
@@ -38,11 +40,7 @@ export class Calendar extends Component {
   fetchEvents = () => {
     const eventsFromLocalStorage = JSON.parse(localStorage.getItem('events'));
     this.setState({ allEvents: eventsFromLocalStorage });
-    console.log('Display all events from local storage');
-
-    if (this.state.event.done === true) {
-      console.log("these are checked")
-    }
+    this.handleEventSources();
   }
 
   // Toggle modals between open and close (toggleFirst = show selected event, toggleSecond = create new event)
@@ -79,7 +77,7 @@ export class Calendar extends Component {
         end: null,
         allDay: true,
         done: null,
-        color: "blue"
+        color: 'rgb(153, 185, 169)'
       };
 
       savedEvents.push(newEvent)
@@ -95,7 +93,7 @@ export class Calendar extends Component {
   render() {
     return (
       <div className='container'>
-        {this.renderSidebar()}
+        <Sidebar allEvents={this.state.allEvents} fetchEvents={this.fetchEvents} />
           <div className='showCalendar'>
             <FullCalendar
               ref={this.calendarRef}
@@ -108,7 +106,8 @@ export class Calendar extends Component {
               editable={true}
               selectable={true}
               initialView='dayGridMonth'
-              events={this.state.allEvents}
+              // events={this.state.allEvents}
+              eventSources={[this.state.handleEventSources, this.state.allEvents]}
               select={this.handleDateSelect}
               eventClick={this.handleEventClick}
               eventsSet={this.handleEvents}
@@ -130,7 +129,7 @@ export class Calendar extends Component {
             </ModalBody>
             <ModalFooter>
               <Button onClick={this.handleCheckedEvent}>Mark as done</Button>
-              <Button id="btn-delete-event" onClick={this.handleDeleteEvent}>Delete</Button>
+              <Button onClick={this.handleDeleteEvent}>Delete</Button>
               <Button onClick={this.toggleFirst}>Cancel</Button>
             </ModalFooter>
           </Modal>
@@ -164,46 +163,24 @@ export class Calendar extends Component {
               </ModalFooter>
             </form>
           </Modal>
-
         </div>
       </div>
     )
   }
 
-  // Render sidebar and sort list of events by date
+  // EVENT SOURCES HANDELING API WITH HOLIDAYS - WORK IN PROGRESS!
 
-  renderSidebar() {
+  handleEventSources = () => {
 
-    let countEvents;
-    let eventList;
-    let unsortedEvents = this.state.allEvents || [];
+    fetch('https://sholiday.faboul.se/dagar/v2.1/2021')
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.dagar);
+        let holidaysFromApi = data.dagar;
+        {moment(holidaysFromApi).format('dddd, MMM Do, YYYY')}
 
-    const sortedEvents = unsortedEvents.sort((a, b) => {
-      let x = moment(a.start).diff(b.start);
-      if (x !== 0) {
-        return x
-      }
-      return moment(a.start).diff(b.start);
-    })
-
-    if (!localStorage.getItem('events')){
-      countEvents = "No upcoming todos, let's add one!"
-      eventList = '';
-    } else {
-      countEvents = 'Upcoming todos:';
-      eventList = sortedEvents.map(renderSidebarEvent)
-    }
-
-    return (
-      <div className='sidebar'>
-        <h1>React calendar with todo's</h1>
-        <h2>{countEvents}</h2>
-        <ul>{eventList}</ul>
-        <div>
-          <p className='remove-todos' onClick={this.handleRemoveCompleted}><i className='fas fa-trash-alt' onClick={this.handleRemoveCompleted} /> Remove all completed todos</p>
-        </div>
-      </div>
-    )
+        this.setState({ holidays: holidaysFromApi });
+    });
   }
 
   // Remove selected event on delete button click 
@@ -234,23 +211,9 @@ export class Calendar extends Component {
     this.toggleFirst();
   }
 
-  // Remove all completed todos after trash can click
-
-  handleRemoveCompleted = () => {
-
-    let array = JSON.parse(localStorage.getItem('events'));
-    let c = window.confirm("Are you sure you want to remove all the completed todos?");
-
-    if (c === true) {
-      let newArray = array.filter(el => el.done !== true)
-      localStorage.setItem('events', JSON.stringify(newArray));
-      this.fetchEvents();
-    }
-  }
-
   // Display all current events on selected day 
 
-  showTodaysEvent = (e) => {
+  showTodaysEvent = () => {
     let todaysDate = this.state.start;
     let array = JSON.parse(localStorage.getItem('events')) || [];
     let filteredArray = array.filter(event => event.start === todaysDate) 
@@ -268,7 +231,7 @@ export class Calendar extends Component {
 
   // Show info about selected event on click
 
-  handleEventClick = ( { event }) => {
+  handleEventClick = ({ event }) => {
     this.toggleFirst();
     this.setState({ event: event });
   };
@@ -277,33 +240,11 @@ export class Calendar extends Component {
 // Function to create unique id for new event
 
 function createEventId() {
-
   let randomId = require('random-id');
   let len = 8;
   let pattern = 'aA0';
   let id = randomId(len, pattern);
-
   return String(id);
-}
-
-// Function to render sidebar with list of all events
-
-function renderSidebarEvent(event) {
-
-  let setClass;
-
-  if (event.done === true) {
-    setClass = "done";
-  } else {
-    setClass = "notDone";
-  }
-
-  return (
-    <li key={event.id} className={setClass}>
-      <b>{moment(event.start).format('dddd, MMM Do, YYYY')}</b><br />
-      <i>{event.title}</i>
-    </li>
-  )
 }
 
 export default Calendar;

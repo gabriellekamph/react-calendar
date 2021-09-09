@@ -1,5 +1,5 @@
 body {
-    background-color: rgb(232, 233, 232);
+    background-color: rgb(253, 253, 253);
     font-family: 'lato', sans-serif;
     font-size: 12px;
 }
@@ -12,7 +12,9 @@ body {
 
 .sidebar {
     width: 250px;
-    background-color: rgb(207, 209, 208);
+    height: 100vh;
+    background-color: rgb(205, 230, 218);
+    border-radius: 25px;
     padding: 20px;
     margin: 10px;
 }
@@ -39,7 +41,7 @@ li {
 }
 
 .done {
-    color: rgba(0, 0, 0, 0.3);
+    color: rgba(126, 148, 124, 0.3);
     text-decoration: line-through;
 }
 
