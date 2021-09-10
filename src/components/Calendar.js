@@ -224,7 +224,7 @@ export class Calendar extends Component {
 
     let array = JSON.parse(localStorage.getItem('events')) || [];
     let doneStatus = array.filter(event => event.id === thisId && event.done === false) 
-    let newestArray = doneStatus.map(todo => {this.toggleFirst()})
+    doneStatus.map(todo => {this.toggleFirst()})
 
   }
 }

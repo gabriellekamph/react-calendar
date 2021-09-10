@@ -21,7 +21,7 @@ class Sidebar extends Component {
         })
 
         if (!localStorage.getItem('events')){
-        countEvents = "Let's add some todo's!"
+        countEvents = "Let's add some todos, shall we?"
         eventList = '';
         } else {
         countEvents = '';
@@ -37,9 +37,10 @@ class Sidebar extends Component {
             </div>
             <p><b>{countEvents}</b></p>
             <ul>{eventList}</ul>
-            <div>
-                <p className='remove-todos' onClick={this.handleRemoveCompleted}><i className='fas fa-trash-alt' onClick={this.handleRemoveCompleted} /> Remove all completed todos</p>
-            </div>
+
+            {
+            localStorage.getItem('events') !== null ? <p className='remove-todos' onClick={this.handleRemoveCompleted}><i className='fas fa-trash-alt' onClick={this.handleRemoveCompleted} /> Remove all completed todos</p> : null
+            }   
         </div>
         )
     }
