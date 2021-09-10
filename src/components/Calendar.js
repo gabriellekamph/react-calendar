@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import FullCalendar, { eventTupleToStore } from '@fullcalendar/react';
+import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import moment from 'moment';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
-import '../components/calendar.scss';
+import '../components/style.scss';
 import Sidebar from './Sidebar';
 
 export class Calendar extends Component {
@@ -224,7 +224,7 @@ export class Calendar extends Component {
 
     let array = JSON.parse(localStorage.getItem('events')) || [];
     let doneStatus = array.filter(event => event.id === thisId && event.done === false) 
-    doneStatus.map(todo => {this.toggleFirst()})
+    doneStatus.forEach(todo => {this.toggleFirst()})
 
   }
 }

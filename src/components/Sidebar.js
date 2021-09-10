@@ -3,7 +3,7 @@ import moment from 'moment';
 import calendarimg from '../calendar.png';
 
 class Sidebar extends Component {
-
+  
     render() {
 
         // Render sidebar and sort list of events by date

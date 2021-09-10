@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './app.scss';
 import Calendar from './components/Calendar';
 import 'bootstrap/dist/css/bootstrap.css';
 
