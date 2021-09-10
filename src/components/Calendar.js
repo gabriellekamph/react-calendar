@@ -151,7 +151,6 @@ export class Calendar extends Component {
                   <li key={item}>{item}</li>
                   ))}
               </ul></h4>
-                <br />
                 <h4>
                   Add new todo: <br />
                 </h4>
@@ -167,19 +166,6 @@ export class Calendar extends Component {
       </div>
     )
   }
-
-  // // EVENT SOURCES HANDELING API WITH HOLIDAYS - WORK IN PROGRESS!
-
-  // handleEventSources = () => {
-
-  //   fetch('https://sholiday.faboul.se/dagar/v2.1/2021')
-  //   .then(response => response.json())
-  //   .then(data => {
-  //       // console.log(data.dagar);
-  //       let holidaysFromApi = data.dagar;
-  //       this.setState({ holidays: holidaysFromApi });
-  //   });
-  // }
 
   // Remove selected event on delete button click 
 
@@ -203,10 +189,11 @@ export class Calendar extends Component {
 
     let eventId = this.state.event.id;
     let arr = JSON.parse(localStorage.getItem('events'));
-    let updatedArr = arr.map(event => event.id === eventId ? { ...event, done: true, color: '#D3D3D3' } : event);
+    let updatedArr = arr.map(event => event.id === eventId ? { ...event, done: true, color: '#D3D3D3'} : event);
 
     localStorage.setItem('events', JSON.stringify(updatedArr));
     this.toggleFirst();
+
     
     }
 
@@ -215,7 +202,7 @@ export class Calendar extends Component {
   showTodaysEvent = () => {
     let todaysDate = this.state.start;
     let array = JSON.parse(localStorage.getItem('events')) || [];
-    let filteredArray = array.filter(event => event.start === todaysDate) 
+    let filteredArray = array.filter(event => event.start === todaysDate && event.done === false) 
     let newestArray = filteredArray.map(todo => todo.title)
     this.setState({ todaysTodos: newestArray })
   }
@@ -231,9 +218,15 @@ export class Calendar extends Component {
   // Show info about selected event on click
 
   handleEventClick = ({ event }) => {
-    this.toggleFirst();
+
     this.setState({ event: event });
-  };
+    let thisId = event.id;
+
+    let array = JSON.parse(localStorage.getItem('events')) || [];
+    let doneStatus = array.filter(event => event.id === thisId && event.done === false) 
+    let newestArray = doneStatus.map(todo => {this.toggleFirst()})
+
+  }
 }
 
 // Function to create unique id for new event
