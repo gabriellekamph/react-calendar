@@ -1,6 +1,6 @@
 body {
     background-color: rgb(253, 253, 253);
-    font-family: 'lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 12px;
 }
 
@@ -12,23 +12,27 @@ body {
 
 .sidebar {
     width: 250px;
-    height: 100vh;
-    background-color: rgb(205, 230, 218);
+    height: 90%;
+    background-color: #CDE6DA;
     border-radius: 25px;
-    padding: 20px;
-    margin: 10px;
+    padding: 30px 20px;
+    margin-top: 25px;
+}
+
+.sidebar-top {
+    text-align: center;
 }
 
 .showCalendar {
-    width: 80%;
+    width: 90%;
     flex-grow: 1;
     padding: 2em;
   }
 
 h1 {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 20px;
+    margin-bottom: 40px;
+    text-transform: uppercase;
 }
 
 h2 {
@@ -36,8 +40,33 @@ h2 {
     margin-bottom: 20px;
 }
 
+h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+h4 {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+hr {
+    margin-bottom: 30px;
+}
+
+ul {
+    padding: 0;
+}
+
 li {
     margin-bottom: 10px;
+    margin-left: 20px;
+}
+
+img {
+    width: 100px;
+    margin-bottom: 20px;
+
 }
 
 .done {
@@ -52,7 +81,7 @@ li {
 
 i {
     margin-right: 10px;
-    margin-top: 20px;
+    margin-top: 30px;
     
     &:hover {
         color: rgb(148, 28, 28);
@@ -61,10 +90,34 @@ i {
 }
 
 .remove-todos {
-    font-family: Arial, Helvetica, sans-serif;
-
+    
     &:hover {
         color: rgb(148, 28, 28);
         cursor: pointer;
     }
+}
+
+.fc-col-header-cell-cushion  {
+    color: #000;
+    text-decoration: none;
+}
+
+.fc-daygrid-day-number {
+    color: #000;
+    text-decoration: none;
+}
+
+.fc .fc-daygrid-day-frame {
+    position: relative;
+    max-height: 60px;
+}
+
+.custom-modal-style {
+    width: 400px;
+    height: 300px;
+}
+
+
+.modal-header {
+    text-align: center;
 }

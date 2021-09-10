@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import FullCalendar from '@fullcalendar/react';
+import FullCalendar, { eventTupleToStore } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -25,7 +25,7 @@ export class Calendar extends Component {
       allEvents: [],
       event: [],
       todaysTodos: [],
-      holidays: []
+      done: false
     };
   }
 
@@ -40,7 +40,6 @@ export class Calendar extends Component {
   fetchEvents = () => {
     const eventsFromLocalStorage = JSON.parse(localStorage.getItem('events'));
     this.setState({ allEvents: eventsFromLocalStorage });
-    this.handleEventSources();
   }
 
   // Toggle modals between open and close (toggleFirst = show selected event, toggleSecond = create new event)
@@ -54,6 +53,8 @@ export class Calendar extends Component {
     this.setState({ secondModal: !this.state.secondModal, event: this.state.event });
     this.fetchEvents();
   }
+
+  // Create new event 
 
   onChange = (event) => {
     let nam = event.target.name;
@@ -76,8 +77,8 @@ export class Calendar extends Component {
         start: start,
         end: null,
         allDay: true,
-        done: null,
-        color: 'rgb(153, 185, 169)'
+        done: false,
+        color: '#89b6a0'
       };
 
       savedEvents.push(newEvent)
@@ -106,8 +107,7 @@ export class Calendar extends Component {
               editable={true}
               selectable={true}
               initialView='dayGridMonth'
-              // events={this.state.allEvents}
-              eventSources={[this.state.handleEventSources, this.state.allEvents]}
+              events={this.state.allEvents}
               select={this.handleDateSelect}
               eventClick={this.handleEventClick}
               eventsSet={this.handleEvents}
@@ -119,16 +119,16 @@ export class Calendar extends Component {
           <Modal
           isOpen={this.state.firstModal}
           toggleFirst={this.toggleFirst}
-          className={this.props.className}
+          className="custom-modal-style"
           >
             <ModalHeader toggleFirst={this.toggleFirst}>
-              <h3>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</h3>
+              <h2>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</h2>
             </ModalHeader>
             <ModalBody>
               <h2>{this.state.event.title}</h2>
             </ModalBody>
             <ModalFooter>
-              <Button onClick={this.handleCheckedEvent}>Mark as done</Button>
+              <Button onClick={this.handleCheckedEvent} id="done-btn">Mark as done</Button>
               <Button onClick={this.handleDeleteEvent}>Delete</Button>
               <Button onClick={this.toggleFirst}>Cancel</Button>
             </ModalFooter>
@@ -139,23 +139,23 @@ export class Calendar extends Component {
           <Modal
           isOpen={this.state.secondModal}
           toggleSecond={this.toggleSecond}
-          className={this.props.className}
+          className="custom-modal-style"
           >
             <ModalHeader toggleSecond={this.toggleSecond}>
-            <h3>{moment(this.state.start).format('dddd, MMM Do, YYYY')}</h3>
+            <h2>{moment(this.state.start).format('dddd, MMM Do, YYYY')}</h2>
             </ModalHeader>
             <form onSubmit={this.onSubmit}>
               <ModalBody>
-              <h2><ul>
+              <h4><ul>
                 {this.state.todaysTodos.map(item => (
                   <li key={item}>{item}</li>
                   ))}
-              </ul></h2>
+              </ul></h4>
                 <br />
-                <h2>
+                <h4>
                   Add new todo: <br />
-                  <input type="text" name="title" placeholder="Title" onChange={this.onChange}></input>
-                </h2>
+                </h4>
+                <input type="text" name="title" placeholder="Title" onChange={this.onChange}></input>
               </ModalBody>
               <ModalFooter>
                 <Button type='submit'>Save new todo</Button>
@@ -168,20 +168,18 @@ export class Calendar extends Component {
     )
   }
 
-  // EVENT SOURCES HANDELING API WITH HOLIDAYS - WORK IN PROGRESS!
+  // // EVENT SOURCES HANDELING API WITH HOLIDAYS - WORK IN PROGRESS!
 
-  handleEventSources = () => {
+  // handleEventSources = () => {
 
-    fetch('https://sholiday.faboul.se/dagar/v2.1/2021')
-    .then(response => response.json())
-    .then(data => {
-        console.log(data.dagar);
-        let holidaysFromApi = data.dagar;
-        {moment(holidaysFromApi).format('dddd, MMM Do, YYYY')}
-
-        this.setState({ holidays: holidaysFromApi });
-    });
-  }
+  //   fetch('https://sholiday.faboul.se/dagar/v2.1/2021')
+  //   .then(response => response.json())
+  //   .then(data => {
+  //       // console.log(data.dagar);
+  //       let holidaysFromApi = data.dagar;
+  //       this.setState({ holidays: holidaysFromApi });
+  //   });
+  // }
 
   // Remove selected event on delete button click 
 
@@ -209,7 +207,8 @@ export class Calendar extends Component {
 
     localStorage.setItem('events', JSON.stringify(updatedArr));
     this.toggleFirst();
-  }
+    
+    }
 
   // Display all current events on selected day 
 
@@ -234,6 +233,10 @@ export class Calendar extends Component {
   handleEventClick = ({ event }) => {
     this.toggleFirst();
     this.setState({ event: event });
+
+    let X = event.target.done;
+
+    console.log(X)
   };
 }
 
