@@ -233,10 +233,6 @@ export class Calendar extends Component {
   handleEventClick = ({ event }) => {
     this.toggleFirst();
     this.setState({ event: event });
-
-    let X = event.target.done;
-
-    console.log(X)
   };
 }
 
