@@ -73,8 +73,9 @@ function renderSidebarEvent(event) {
   
     return (
       <li key={event.id} className={setClass}>
-        {event.title} <br />
-        <b>{moment(event.start).format('dddd, MMM Do, YYYY')}</b><br />
+        {moment(event.start).format('dddd, MMM Do, YYYY')}<br />
+        {event.title}
+
 
       </li>
     )
