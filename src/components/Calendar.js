@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '../components/style.scss';
 import Sidebar from './Sidebar';
 
+
 export class Calendar extends Component {
 
   calendarRef = React.createRef();
@@ -38,7 +39,7 @@ export class Calendar extends Component {
   // Fetch todos from local storage
 
   fetchEvents = () => {
-    const eventsFromLocalStorage = JSON.parse(localStorage.getItem('events'));
+    const eventsFromLocalStorage = JSON.parse(localStorage.getItem('events') || '{}');
     this.setState({ allEvents: eventsFromLocalStorage });
   }
 
@@ -64,7 +65,7 @@ export class Calendar extends Component {
 
   onSubmit = (event) => {
     let calendarApi = this.calendarRef.current.getApi()
-    let savedEvents = JSON.parse(localStorage.getItem('events')) || [];
+    let savedEvents = JSON.parse(localStorage.getItem('events') || '{}') || [];
     let title = this.state.title;
     let start = this.state.start;
     
@@ -118,11 +119,11 @@ export class Calendar extends Component {
 
           <Modal
           isOpen={this.state.firstModal}
-          toggleFirst={this.toggleFirst}
+          toggle={this.toggleFirst}
           className="custom-modal-style"
           >
-            <ModalHeader toggleFirst={this.toggleFirst}>
-              <h2>{moment(this.state.event.start).format('dddd, MMM Do, YYYY')}</h2>
+            <ModalHeader toggle={this.toggleFirst}>
+              {moment(this.state.event.start).format('dddd, MMM Do, YYYY')}
             </ModalHeader>
             <ModalBody>
               <h2>{this.state.event.title}</h2>
@@ -138,11 +139,11 @@ export class Calendar extends Component {
 
           <Modal
           isOpen={this.state.secondModal}
-          toggleSecond={this.toggleSecond}
+          toggle={this.toggleSecond}
           className="custom-modal-style"
           >
-            <ModalHeader toggleSecond={this.toggleSecond}>
-            <h2>{moment(this.state.start).format('dddd, MMM Do, YYYY')}</h2>
+            <ModalHeader toggle={this.toggleSecond}>
+            {moment(this.state.start).format('dddd, MMM Do, YYYY')}
             </ModalHeader>
             <form onSubmit={this.onSubmit}>
               <ModalBody>
@@ -174,7 +175,7 @@ export class Calendar extends Component {
     let eventId = this.state.event.id;
     this.state.event.remove();        // Removes event from calendar view
 
-    let arr = JSON.parse(localStorage.getItem('events'));
+    let arr = JSON.parse(localStorage.getItem('events') || '{}');
     let updatedArr = arr.filter(function(a) {
       return a.id !== eventId;        // Removes event from local storage
     });
@@ -188,7 +189,7 @@ export class Calendar extends Component {
   handleCheckedEvent = () => {
 
     let eventId = this.state.event.id;
-    let arr = JSON.parse(localStorage.getItem('events'));
+    let arr = JSON.parse(localStorage.getItem('events') || '{}');
     let updatedArr = arr.map(event => event.id === eventId ? { ...event, done: true, color: '#D3D3D3'} : event);
 
     localStorage.setItem('events', JSON.stringify(updatedArr));
@@ -201,7 +202,7 @@ export class Calendar extends Component {
 
   showTodaysEvent = () => {
     let todaysDate = this.state.start;
-    let array = JSON.parse(localStorage.getItem('events')) || [];
+    let array = JSON.parse(localStorage.getItem('events') || '{}') || [];
     let filteredArray = array.filter(event => event.start === todaysDate && event.done === false) 
     let newestArray = filteredArray.map(todo => todo.title)
     this.setState({ todaysTodos: newestArray })
@@ -222,7 +223,7 @@ export class Calendar extends Component {
     this.setState({ event: event });
     let thisId = event.id;
 
-    let array = JSON.parse(localStorage.getItem('events')) || [];
+    let array = JSON.parse(localStorage.getItem('events') || '{}') || [];
     let doneStatus = array.filter(event => event.id === thisId && event.done === false) 
     doneStatus.forEach(todo => {this.toggleFirst()})
 

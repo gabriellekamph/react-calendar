@@ -2,17 +2,27 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import calendarimg from '../calendar.png';
 
-class Sidebar extends Component {
+interface Props {
+  allEvents: any,
+  fetchEvents: () => void,
+}
+
+interface State {
+  countEvents: string,
+  eventList: string,
+  unsortedEvents: any,
+}
+
+class Sidebar extends Component <Props, State> {
   
     render() {
-
         // Render sidebar and sort list of events by date
 
         let countEvents;
         let eventList;
         let unsortedEvents = this.props.allEvents || [];
 
-        const sortedEvents = unsortedEvents.sort((a, b) => {
+        const sortedEvents = unsortedEvents.sort((a: any, b: any) => {
         let x = moment(a.start).diff(b.start);
         if (x !== 0) {
             return x
@@ -49,11 +59,11 @@ class Sidebar extends Component {
 
     handleRemoveCompleted = () => {
 
-        let array = JSON.parse(localStorage.getItem('events'));
+        let array = JSON.parse(localStorage.getItem('events') || '{}');
         let c = window.confirm("Are you sure you want to remove all the completed todos?");
 
         if (c === true) {
-        let newArray = array.filter(el => el.done !== true)
+        let newArray: any = array.filter((el:any) => el.done !== true)
         localStorage.setItem('events', JSON.stringify(newArray));
         this.props.fetchEvents();
         }
@@ -62,9 +72,9 @@ class Sidebar extends Component {
 
 // Function to render sidebar with list of all events
 
-function renderSidebarEvent(event) {
+function renderSidebarEvent(event: any) {
 
-    let setClass;
+    let setClass: string;
   
     if (event.done === true) {
       setClass = "done";
@@ -76,8 +86,6 @@ function renderSidebarEvent(event) {
       <li key={event.id} className={setClass}>
         {moment(event.start).format('dddd, MMM Do, YYYY')}<br />
         {event.title}
-
-
       </li>
     )
 }
